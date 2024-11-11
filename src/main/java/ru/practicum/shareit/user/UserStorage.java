@@ -26,9 +26,9 @@ public class UserStorage {
         if (id == null)
             throw new ValidationException("Не задан id пользователя");
         Optional<User> user = users.values().stream()
-                .filter(x -> x.getId() == id)
+                .filter(x -> x.getId().equals(id))
                 .findFirst();
-        if (user.isEmpty() == true)
+        if (user.isEmpty())
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Пользователь не найден");
         return user;
     }
@@ -68,9 +68,9 @@ public class UserStorage {
                 .findFirst()
                 .isEmpty();
         boolean isCorrectEmail = newUser.getEmail().contains("@");
-        if (isCorrectEmail != true)
+        if (!isCorrectEmail)
             throw new ValidationException("Email задан неверно");
-        if (isNotSameEmail != true)
+        if (!isNotSameEmail)
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Email совпадает");
     }
 }
