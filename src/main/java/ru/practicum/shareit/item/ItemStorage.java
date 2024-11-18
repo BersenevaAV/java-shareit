@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.user.User;
 
 import java.util.*;
 
@@ -13,8 +14,8 @@ public class ItemStorage {
     private final Map<Long, Item> items = new HashMap<>();
     private Long idGenerator = 1L;
 
-    public Item createItem(Long userId,Item item) {
-        item.setOwner(userId);
+    public Item createItem(Long userId, Item item) {
+        item.setOwner(new User());
         checkNewItem(item);
         item.setId(idGenerator++);
         items.put(item.getId(),item);

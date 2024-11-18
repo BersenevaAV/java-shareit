@@ -3,6 +3,8 @@ package ru.practicum.shareit.item;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.item.comment.Comment;
+import ru.practicum.shareit.item.comment.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 import java.util.List;
@@ -14,7 +16,8 @@ public class ItemController {
     private final ItemService itemService;
 
     @PostMapping
-    public ItemDto createItem(@RequestHeader("X-Sharer-User-Id") Long userId,@Valid @RequestBody Item item) {
+    public ItemDto createItem(@RequestHeader("X-Sharer-User-Id") Long userId,
+                              @Valid @RequestBody Item item) {
         return itemService.createItem(userId, item);
     }
 
@@ -24,17 +27,26 @@ public class ItemController {
     }
 
     @PatchMapping("/{id}")
-    public ItemDto updateItem(@RequestHeader("X-Sharer-User-Id") Long userId, @PathVariable Long id,@Valid @RequestBody Item item) {
+    public ItemDto updateItem(@RequestHeader("X-Sharer-User-Id") Long userId,
+                              @PathVariable Long id,
+                              @Valid @RequestBody Item item) {
         return itemService.updateItem(id, item, userId);
     }
 
-    @GetMapping("/{id}")
-    public ItemDto findById(@PathVariable Long id) {
-        return itemService.findById(id);
+    @GetMapping("/{itemId}")
+    public ItemDto findById(@PathVariable Long itemId) {
+        return itemService.findById(itemId);
     }
 
-    @GetMapping(("/search"))
+    @GetMapping("/search")
     public List<ItemDto> findOfText(@RequestParam("text") String text) {
         return itemService.findOfText(text);
+    }
+
+    @PostMapping("/{itemId}/comment")
+    public CommentDto createComment(@PathVariable Long itemId,
+                                    @RequestHeader("X-Sharer-User-Id") Long userId,
+                                    @Valid @RequestBody Comment comment) {
+        return itemService.createComment(itemId,userId,comment);
     }
 }
