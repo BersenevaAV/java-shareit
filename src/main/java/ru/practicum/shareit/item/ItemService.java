@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.exception.ValidationException;
@@ -23,6 +24,7 @@ public class ItemService {
     private final CommentRepository commentRepository;
     private final BookingRepository bookingRepository;
 
+    @Transactional
     public ItemDto createItem(Long userId, Item item) {
         log.info("Пришел запрос на создание вещи с названием = {}", item.getName());
         checkNewItem(item);
@@ -32,6 +34,7 @@ public class ItemService {
         return ItemMapper.toItemDto(saveItem, commentRepository.findByItemId(saveItem.getId()));
     }
 
+    @Transactional(readOnly = true)
     public List<ItemDto> getAll(Long userId) {
         log.info("Пришел запрос на вывод информации о всех вещах владельца id = {}", userId);
         return itemRepository.findByOwnerId(userId)
@@ -45,6 +48,7 @@ public class ItemService {
                 .toList();
     }
 
+    @Transactional
     public ItemDto updateItem(Long id, Item item, Long userId) {
         log.info("Пришел запрос на обновление вещи с id = {}", id);
         Item oldItem = itemRepository.findById(id)
@@ -63,6 +67,7 @@ public class ItemService {
         return ItemMapper.toItemDto(itemRepository.save(item),commentRepository.findByItemId(id));
     }
 
+    @Transactional(readOnly = true)
     public ItemDto findById(Long id) {
         log.info("Пришел запрос на поиск вещи с id = {}", id);
         return ItemMapper.toItemDto(itemRepository.findById(id)
@@ -70,6 +75,7 @@ public class ItemService {
                 commentRepository.findByItemId(id));
     }
 
+    @Transactional(readOnly = true)
     public List<ItemDto> findOfText(String text) {
         log.info("Пришел запрос на поиск вещи с описанием = {}", text);
         if (text.equals(""))
@@ -83,6 +89,7 @@ public class ItemService {
                 .toList();
     }
 
+    @Transactional
     public CommentDto createComment(Long itemId, Long userId, Comment comment) {
         log.info("Пришел запрос на создание комментария");
         LocalDateTime dateTimeComment = LocalDateTime.now();

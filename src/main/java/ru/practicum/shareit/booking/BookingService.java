@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.exception.ValidationException;
@@ -21,6 +22,7 @@ public class BookingService {
     private final UserRepository userRepository;
     private final ItemRepository itemRepository;
 
+    @Transactional
     public Booking createBooking(Long userId, BookingDto booking) {
         log.info("Пришел запрос на создание бронирования вещи");
         User user = userRepository.findById(userId)
@@ -33,12 +35,16 @@ public class BookingService {
         return bookingRepository.save(BookingMapper.fromBookingDto(booking,item,user));
     }
 
+    @Transactional(readOnly = true)
     public Booking findById(Long id) {
+        log.info("Пришел запрос на поиск бронирования с id = {}", id);
         return bookingRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Бронирование не найдено"));
     }
 
+    @Transactional
     public Booking changeStatusBooking(Long userId, Long bookingId, boolean approved) {
+        log.info("Пришел запрос на изменение статуса бронирования с id = {}", bookingId);
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ValidationException("Пользователь не корректен"));
         Booking booking = bookingRepository.findById(bookingId)
@@ -50,7 +56,9 @@ public class BookingService {
         return bookingRepository.save(booking);
     }
 
+    @Transactional(readOnly = true)
     public List<Booking> findByState(Long userId, String state) {
+        log.info("Пришел запрос на получение списка всех бронирований текущего пользователя с id = {}", userId);
         if (State.valueOf(state).equals(State.ALL))
             return bookingRepository.findByStateEqualsAll(userId);
         if (State.valueOf(state).equals(State.CURRENT))
@@ -66,7 +74,9 @@ public class BookingService {
         throw new IllegalStateException("Неправильно заданы данные");
     }
 
+    @Transactional(readOnly = true)
     public List<Booking> findByOwnerAndState(Long userId, String state) {
+        log.info("Пришел запрос на получение списка бронирований для всех вещей текущего пользователя с id = {}", userId);
         if (State.valueOf(state).equals(State.ALL))
             return bookingRepository.findByOwnerAndStateEqualsAll(userId);
         if (State.valueOf(state).equals(State.CURRENT))
