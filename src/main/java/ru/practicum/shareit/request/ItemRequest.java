@@ -1,15 +1,25 @@
 package ru.practicum.shareit.request;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.*;
+import lombok.*;
+import ru.practicum.shareit.user.User;
 
-@Data
+@Entity
+@Table(name = "item_requests")
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class ItemRequest {
-    private String id;
+    @Id
+    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    @Column(name = "description")
     private String description;
-    private String requestor;
-    private String created;
+
+    @ManyToOne
+    @JoinColumn(name = "requestor_id")
+    private User user;
 }
