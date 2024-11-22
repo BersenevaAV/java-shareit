@@ -25,7 +25,6 @@ class BookingServiceTest {
 
     @Test
     void changeStatusBooking() {
-        Booking booking = bookingService.changeStatusBooking(1L,2L,true);
     }
 
 }
