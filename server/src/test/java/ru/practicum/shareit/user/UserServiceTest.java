@@ -5,8 +5,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import ru.practicum.shareit.user.dto.UserDto;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
@@ -24,7 +22,7 @@ class UserServiceTest {
 
     @Test
     void createUser() {
-        User user = new User( 1L,"user1", "mail1@mail.ru");
+        User user = new User(1L,"user1", "mail1@mail.ru");
         when(userRepository.save(user)).thenReturn(user);
         assertNotNull(userService.createUser(user));
     }

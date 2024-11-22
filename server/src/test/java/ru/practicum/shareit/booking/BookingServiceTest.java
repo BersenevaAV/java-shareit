@@ -7,7 +7,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.user.UserRepository;
-import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 class BookingServiceTest {
@@ -20,7 +19,7 @@ class BookingServiceTest {
     ItemRepository itemRepository;
 
     @BeforeEach
-    public void setUp(){
+    public void setUp() {
         bookingService = new BookingService(bookingRepository, userRepository, itemRepository);
     }
 
