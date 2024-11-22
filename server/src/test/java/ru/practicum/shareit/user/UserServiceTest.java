@@ -8,6 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import ru.practicum.shareit.user.dto.UserDto;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
@@ -17,13 +18,14 @@ class UserServiceTest {
     private UserRepository userRepository;
 
     @BeforeEach
-    public void setUp(){
+    public void setUp() {
         userService = new UserService(userRepository);
     }
 
     @Test
     void createUser() {
-        UserDto userDto = userService.createUser(new User("user1", "mail1@mail.ru"));
+        User user = new User( 1L,"user1", "mail1@mail.ru");
+        when(userRepository.save(user)).thenReturn(user);
+        assertNotNull(userService.createUser(user));
     }
-
 }

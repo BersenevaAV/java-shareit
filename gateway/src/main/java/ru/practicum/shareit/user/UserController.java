@@ -18,7 +18,7 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<Object> createUser(@RequestBody @Valid UserRequestDto requestDto) {
-        log.info("Создание");
+        log.info("Создание пользователя ");
         return userClient.createUser(requestDto);
     }
 

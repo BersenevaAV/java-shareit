@@ -32,7 +32,6 @@ public class ItemService {
     @Transactional
     public ItemDto createItem(Long userId, ItemRequestDto item) {
         log.info("Пришел запрос на создание вещи с названием = {}", item.getName());
-        //checkNewItem(item);
         ItemRequest itemRequest = null;
         if (item.getRequestId() != null)
             itemRequest = requestRepository.findById(item.getRequestId())

@@ -105,17 +105,13 @@ public class BaseClient {
     }
 
     private static ResponseEntity<Object> prepareGatewayResponse(ResponseEntity<Object> response) {
-        System.out.println("О");
         if (response.getStatusCode().is2xxSuccessful()) {
             return response;
         }
-        System.out.println("1");
         ResponseEntity.BodyBuilder responseBuilder = ResponseEntity.status(response.getStatusCode());
-        System.out.println("2");
         if (response.hasBody()) {
             return responseBuilder.body(response.getBody());
         }
-        System.out.println("3");
         return responseBuilder.build();
     }
 }
