@@ -47,37 +47,37 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     @Query(value = "select b.* from items i " +
             "right join booking b on b.item_id = i.id " +
-            "where u.owner_id = ?1 " +
+            "where i.owner_id = ?1 " +
             "order by b.start_booking desc ", nativeQuery = true)
     public List<Booking> findByOwnerAndStateEqualsAll(Long userId);
 
     @Query(value = "select b.* from items i " +
             "right join booking b on b.item_id = i.id " +
-            "where u.owner_id = ?1 and b.start_booking < now() and b.end_booking > now() " +
+            "where i.owner_id = ?1 and b.start_booking < now() and b.end_booking > now() " +
             "order by b.start_booking desc ", nativeQuery = true)
     public List<Booking> findByOwnerAndStateEqualsCurrent(Long userId);
 
     @Query(value = "select b.* from items i " +
             "right join booking b on b.item_id = i.id " +
-            "where u.owner_id = ?1 and b.end_booking < now() " +
+            "where i.owner_id = ?1 and b.end_booking < now() " +
             "order by b.start_booking desc ", nativeQuery = true)
     public List<Booking> findByOwnerAndStateEqualsPast(Long userId);
 
     @Query(value = "select b.* from items i " +
             "right join booking b on b.item_id = i.id " +
-            "where u.owner_id = ?1 and b.start_booking > now() " +
+            "where i.owner_id = ?1 and b.start_booking > now() " +
             "order by b.start_booking desc ", nativeQuery = true)
     public List<Booking> findByOwnerAndStateEqualsFuture(Long userId);
 
     @Query(value = "select b.* from items i " +
             "right join booking b on b.item_id = i.id " +
-            "where u.owner_id = ?1 and b.status = 'WAITING'  " +
+            "where i.owner_id = ?1 and b.status = 'WAITING'  " +
             "order by b.start_booking desc ", nativeQuery = true)
     public List<Booking> findByOwnerAndStateEqualsWaiting(Long userId);
 
     @Query(value = "select b.* from items i " +
             "right join booking b on b.item_id = i.id " +
-            "where u.owner_id = ?1 and b.status = 'REJECTED' " +
+            "where i.owner_id = ?1 and b.status = 'REJECTED' " +
             "order by b.start_booking desc ", nativeQuery = true)
     public List<Booking> findByOwnerAndStateEqualsRejected(Long userId);
 

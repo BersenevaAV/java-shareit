@@ -10,7 +10,11 @@ import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.comment.*;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemRequestDto;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.request.ItemRequest;
+import ru.practicum.shareit.request.RequestRepository;
+import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -23,14 +27,20 @@ public class ItemService {
     private final UserRepository userRepository;
     private final CommentRepository commentRepository;
     private final BookingRepository bookingRepository;
+    private final RequestRepository requestRepository;
 
     @Transactional
-    public ItemDto createItem(Long userId, Item item) {
+    public ItemDto createItem(Long userId, ItemRequestDto item) {
         log.info("Пришел запрос на создание вещи с названием = {}", item.getName());
-        checkNewItem(item);
-        item.setOwner(userRepository.findById(userId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Пользователь не найден")));
-        Item saveItem = itemRepository.save(item);
+        //checkNewItem(item);
+        ItemRequest itemRequest = null;
+        if (item.getRequestId() != null)
+            itemRequest = requestRepository.findById(item.getRequestId())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Запрос не найден"));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Пользователь не найден"));
+        Item newItem = ItemMapper.toItem(item, user, itemRequest);
+        Item saveItem = itemRepository.save(newItem);
         return ItemMapper.toItemDto(saveItem, commentRepository.findByItemId(saveItem.getId()));
     }
 
@@ -92,8 +102,8 @@ public class ItemService {
     @Transactional
     public CommentDto createComment(Long itemId, Long userId, Comment comment) {
         log.info("Пришел запрос на создание комментария");
-        LocalDateTime dateTimeComment = LocalDateTime.now();
-        bookingRepository.findByItemAndBooker(itemId,userId, dateTimeComment)
+        LocalDateTime dateTimeComment =  LocalDateTime.now();
+        bookingRepository.findByItemAndBooker(itemId, userId, dateTimeComment)
                 .orElseThrow(() -> new ValidationException("Бронирование не доступны"));
         comment.setItem(itemRepository.findById(itemId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Вещь не найдена")));

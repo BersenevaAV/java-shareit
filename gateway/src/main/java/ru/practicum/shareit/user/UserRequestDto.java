@@ -9,9 +9,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserRequestDto {
-    String name;
-    @Email
-    String email;
+    private String name;
+    @Email(message = "Email should be valid")
+    private String email;
 }
 
 
