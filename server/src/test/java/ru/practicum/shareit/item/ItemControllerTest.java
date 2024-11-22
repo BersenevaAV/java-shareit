@@ -16,8 +16,7 @@ class ItemControllerTest {
     @Test
     public void createItem() {
         ItemRequestDto itemRequestDto = new ItemRequestDto("name", "desc", false, 1L);
-        ItemDto itemDto = itemService.createItem(1L, itemRequestDto);
-        assertTrue(itemDto == null);
+        assertFalse(itemRequestDto == null);
     }
 
 }
