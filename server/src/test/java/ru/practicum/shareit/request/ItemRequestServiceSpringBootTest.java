@@ -6,13 +6,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserService;
 import ru.practicum.shareit.user.dto.UserDto;
 import java.util.List;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @AutoConfigureTestDatabase
 @Transactional
@@ -43,5 +43,12 @@ class ItemRequestServiceSpringBootTest {
         assertTrue(requests.stream()
                 .filter((x) -> (x.getDescription().equals("request")))
                 .findFirst().isPresent());
+    }
+
+    @Test
+    void createRequestOfWrongUser() {
+        UserDto newUser = userService.createUser(user);
+        assertThrows(ResponseStatusException.class,
+                () -> itemRequestService.createRequest(newUser.getId()+2,request));
     }
 }

@@ -36,10 +36,19 @@ class UserServiceSpringBootTest {
     }
 
     @Test
-    void createUserWithDuplicate() {
+    void createUserWithDuplicateEmail() {
         User user2 = new User();
         user2.setName("user2");
         user2.setEmail("us@mail.ru");
+        userService.createUser(user);
+        assertThrows(DataIntegrityViolationException.class,() -> userService.createUser(user2));
+    }
+
+    @Test
+    void createUserWithDuplicateName() {
+        User user2 = new User();
+        user2.setName("user");
+        user2.setEmail("us2@mail.ru");
         userService.createUser(user);
         assertThrows(DataIntegrityViolationException.class,() -> userService.createUser(user2));
     }
