@@ -5,11 +5,16 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.shareit.user.dto.UserDto;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -42,4 +47,60 @@ class UserControllerMvcTest {
                 .andExpect(jsonPath("$[1].name").value("name2"))
                 .andExpect(jsonPath("$[1].email").value("email2"));
     }
+
+    @Test
+    public void testGetById() throws Exception {
+        long userId = 1;
+        UserDto userDto = new UserDto(userId, "User", "email");
+        when(userService.findById(userId))
+                .thenReturn(userDto);
+        mvc.perform(get("/users/{id}", userId))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value(userId))
+                .andExpect(jsonPath("$.name").value("User"))
+                .andExpect(jsonPath("$.email").value("email"));
+    }
+
+    @Test
+    void createUserThrowDuplicateException() throws Exception {
+        User userCreateDto = new User("name", "email");
+        when(userService.createUser(userCreateDto))
+                .thenThrow(new DataIntegrityViolationException("Данный email уже используется"));
+        mvc.perform(post("/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(userCreateDto)))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void testUpdateUser() throws Exception {
+        long userId = 1L;
+        User updateDto = new User("name", "email");
+        UserDto expectedResponse = new UserDto(userId, "name", "email");
+
+        when(userService.updateUser(eq(userId),any(User.class)))
+                .thenReturn(expectedResponse);
+
+        mvc.perform(patch("/users/{id}", userId)
+                        .content(objectMapper.writeValueAsString(updateDto))
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(userId))
+                .andExpect(jsonPath("$.name").value("name"))
+                .andExpect(jsonPath("$.email").value("email"));
+    }
+
+    @Test
+    public void testDeleteUser() throws Exception {
+        long userId = 1L;
+
+        doNothing().when(userService).deleteUser(userId);
+
+        mvc.perform(delete("/users/{id}", userId))
+                .andExpect(status().isOk());
+    }
+
 }
