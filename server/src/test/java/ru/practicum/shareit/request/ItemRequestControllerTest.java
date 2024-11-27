@@ -14,8 +14,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
-import java.util.List;
-
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -30,9 +28,7 @@ class ItemRequestControllerTest {
     @InjectMocks
     private ItemRequestController controller;
     private final ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
-
     private MockMvc mvc;
-
     private ItemRequestDto itemRequestDto;
     private ItemRequest itemRequest;
 
@@ -42,12 +38,14 @@ class ItemRequestControllerTest {
         LocalDateTime timeCreated = LocalDateTime.now();
         itemRequestDto = new ItemRequestDto(1L, "", timeCreated, null);
         itemRequest = new ItemRequest(1L,"", timeCreated,null);
+        itemRequest.setCreated(timeCreated);
     }
 
     @Test
     void createRequest() throws Exception {
         when(itemRequestService.createRequest(any(),any()))
                 .thenReturn(itemRequestDto);
+
         mvc.perform(post("/requests")
                         .header("X-Sharer-User-Id",1L)
                         .content(mapper.writeValueAsString(itemRequest))
