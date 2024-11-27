@@ -49,6 +49,6 @@ class ItemRequestServiceSpringBootTest {
     void createRequestOfWrongUser() {
         UserDto newUser = userService.createUser(user);
         assertThrows(ResponseStatusException.class,
-                () -> itemRequestService.createRequest(newUser.getId()+2,request));
+                () -> itemRequestService.createRequest(newUser.getId() + 2,request));
     }
 }
