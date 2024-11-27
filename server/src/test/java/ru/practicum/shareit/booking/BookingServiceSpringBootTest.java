@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.item.ItemService;
 import ru.practicum.shareit.item.dto.ItemDto;
@@ -55,5 +56,12 @@ class BookingServiceSpringBootTest {
         assertEquals(newBooking.getStatus(),Status.WAITING);
         Booking changeStatusBooking = bookingService.changeStatusBooking(newUser.getId(),newBooking.getId(),true);
         assertEquals(changeStatusBooking.getStatus(),Status.APPROVED);
+    }
+
+    @Test
+    void createBookingWithWrongUser() {
+        UserDto newUser = userService.createUser(user);
+        assertThrows(ResponseStatusException.class,
+                () -> bookingService.createBooking(newUser.getId() + 5,bookingDto));
     }
 }
