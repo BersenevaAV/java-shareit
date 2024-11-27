@@ -10,10 +10,7 @@ import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserService;
 import ru.practicum.shareit.user.dto.UserDto;
-
-import java.time.LocalDateTime;
 import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -44,7 +41,7 @@ class ItemRequestServiceSpringBootTest {
         List<ItemRequest> requests = itemRequestService.getAll(newUser.getId());
         assertEquals(1, requests.size());
         assertTrue(requests.stream()
-                .filter((x)->(x.getDescription().equals("request")))
+                .filter((x) -> (x.getDescription().equals("request")))
                 .findFirst().isPresent());
     }
 }
