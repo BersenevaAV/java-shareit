@@ -16,9 +16,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @SpringBootTest
 class UserServiceSpringBootTest {
     @Autowired
-    UserService userService;
+    private UserService userService;
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
     private User user;
 
     @BeforeEach
