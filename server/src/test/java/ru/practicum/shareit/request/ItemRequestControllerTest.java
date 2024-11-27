@@ -14,10 +14,12 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.util.List;
+
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -55,5 +57,39 @@ class ItemRequestControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(itemRequestDto.getId()), Long.class))
                 .andExpect(jsonPath("$.description", is(itemRequestDto.getDescription())));
+    }
+
+    @Test
+    void getUserRequest() throws Exception {
+        mvc.perform(get("/requests")
+                        .header("X-Sharer-User-Id",1L)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void findRequest() throws Exception {
+        when(itemRequestService.findById(any(), any()))
+                .thenReturn(itemRequestDto);
+        mvc.perform(get("/requests/1")
+                        .header("X-Sharer-User-Id",1L)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(itemRequestDto.getId()), Long.class))
+                .andExpect(jsonPath("$.description", is(itemRequestDto.getDescription())));
+    }
+
+    @Test
+    void getAll() throws Exception {
+        mvc.perform(get("/requests/all")
+                        .header("X-Sharer-User-Id",1L)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
     }
 }
