@@ -8,6 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import ru.practicum.shareit.booking.dto.BookingDto;
+import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.ItemService;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemRequestDto;
@@ -46,16 +47,25 @@ class BookingServiceSpringBootTest {
     }
 
     @Test
-    void changeStatusBooking() {
+    void changeStatusBookingWithApproved() {
         UserDto newUser = userService.createUser(user);
         ItemDto newItem = itemService.createItem(newUser.getId(),itemRequestDto);
         bookingDto.setItemId(newItem.getId());
         Booking newBooking = bookingService.createBooking(newUser.getId(),bookingDto);
-        assertEquals(bookingDto.getStart(),newBooking.getStart());
-        assertEquals(bookingDto.getEnd(),newBooking.getEnd());
         assertEquals(newBooking.getStatus(),Status.WAITING);
         Booking changeStatusBooking = bookingService.changeStatusBooking(newUser.getId(),newBooking.getId(),true);
         assertEquals(changeStatusBooking.getStatus(),Status.APPROVED);
+    }
+
+    @Test
+    void changeStatusBookingWithNotApproved() {
+        UserDto newUser = userService.createUser(user);
+        ItemDto newItem = itemService.createItem(newUser.getId(),itemRequestDto);
+        bookingDto.setItemId(newItem.getId());
+        Booking newBooking = bookingService.createBooking(newUser.getId(),bookingDto);
+        assertEquals(newBooking.getStatus(),Status.WAITING);
+        Booking changeStatusBooking = bookingService.changeStatusBooking(newUser.getId(),newBooking.getId(),false);
+        assertEquals(changeStatusBooking.getStatus(),Status.REJECTED);
     }
 
     @Test
@@ -63,5 +73,36 @@ class BookingServiceSpringBootTest {
         UserDto newUser = userService.createUser(user);
         assertThrows(ResponseStatusException.class,
                 () -> bookingService.createBooking(newUser.getId() + 5,bookingDto));
+    }
+
+    @Test
+    void createBookingWithUnavailableItem() {
+        UserDto newUser = userService.createUser(user);
+        itemRequestDto.setAvailable(false);
+        ItemDto newItem = itemService.createItem(newUser.getId(),itemRequestDto);
+        bookingDto.setItemId(newItem.getId());
+        assertThrows(ValidationException.class,
+                () -> bookingService.createBooking(newUser.getId(),bookingDto));
+    }
+
+    @Test
+    void createRightBooking() {
+        UserDto newUser = userService.createUser(user);
+        ItemDto newItem = itemService.createItem(newUser.getId(),itemRequestDto);
+        bookingDto.setItemId(newItem.getId());
+        Booking newBooking = bookingService.createBooking(newUser.getId(),bookingDto);
+        assertEquals(bookingDto.getStart(),newBooking.getStart());
+        assertEquals(bookingDto.getEnd(),newBooking.getEnd());
+        assertEquals(newBooking.getStatus(),Status.WAITING);
+    }
+
+    @Test
+    void findByStateAll() {
+        bookingService.findByState(1L,State.ALL.toString());
+        bookingService.findByState(1L,State.CURRENT.toString());
+        bookingService.findByState(1L,State.PAST.toString());
+        bookingService.findByState(1L,State.FUTURE.toString());
+        bookingService.findByState(1L,State.WAITING.toString());
+        bookingService.findByState(1L,State.REJECTED.toString());
     }
 }
