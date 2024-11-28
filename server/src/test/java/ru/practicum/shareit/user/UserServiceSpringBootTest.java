@@ -7,9 +7,10 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 import ru.practicum.shareit.user.dto.UserDto;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @AutoConfigureTestDatabase
 @Transactional
@@ -61,5 +62,20 @@ class UserServiceSpringBootTest {
         assertEquals("user", updatedUserWithoutName.getName());
         assertEquals("userUpdated", updatedUserWithoutEmail.getName());
         assertEquals("descUpdated", updatedUserWithoutEmail.getEmail());
+    }
+
+    @Test
+    void finfByIdAndDelete() {
+        UserDto newUser = userService.createUser(user);
+        assertEquals(userService.findById(newUser.getId()),newUser);
+        userService.deleteUser(newUser.getId());
+        assertThrows(ResponseStatusException.class,
+                () -> userService.findById(newUser.getId()));
+    }
+
+    @Test
+    void getAllUsers() {
+        UserDto newUser = userService.createUser(user);
+        assertTrue(userService.getAll().contains(newUser));
     }
 }
