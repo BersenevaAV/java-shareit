@@ -114,7 +114,7 @@ class BookingServiceSpringBootTest {
         assertEquals(0,bookings.size());
         assertThrows(IllegalArgumentException.class,() -> bookingService.findByState(1L,"Present"));
     }
-    
+
     @Test
     void findByOwnerAndStateAllVariants() {
         List<Booking> bookings;
