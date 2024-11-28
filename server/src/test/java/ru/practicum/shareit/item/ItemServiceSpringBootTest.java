@@ -8,13 +8,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemRequestDto;
+import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.ItemRequest;
 import ru.practicum.shareit.request.ItemRequestService;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserService;
 import ru.practicum.shareit.user.dto.UserDto;
 import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 @AutoConfigureTestDatabase
@@ -69,5 +69,15 @@ class ItemServiceSpringBootTest {
         ItemDto newItem = itemService.createItem(newUser.getId(),itemRequestDto);
         List<ItemDto> itemsOfText = itemService.findOfText("");
         assertTrue(itemsOfText.isEmpty());
+    }
+
+    @Test
+    void updateWithEmptyName() {
+        UserDto newUser = userService.createUser(user);
+        itemRequestService.createRequest(newUser.getId(),request);
+        ItemDto newItem = itemService.createItem(newUser.getId(),itemRequestDto);
+        ItemDto updatedItem = itemService.updateItem(newItem.getId(),new Item(), newUser.getId());
+        assertEquals("item",updatedItem.getName());
+        assertEquals("itemDesc",updatedItem.getDescription());
     }
 }
