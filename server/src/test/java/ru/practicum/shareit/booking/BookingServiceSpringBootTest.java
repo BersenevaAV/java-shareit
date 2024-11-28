@@ -16,6 +16,7 @@ import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserService;
 import ru.practicum.shareit.user.dto.UserDto;
 import java.time.LocalDateTime;
+import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @AutoConfigureTestDatabase
@@ -97,12 +98,38 @@ class BookingServiceSpringBootTest {
     }
 
     @Test
-    void findByStateAll() {
-        bookingService.findByState(1L,State.ALL.toString());
-        bookingService.findByState(1L,State.CURRENT.toString());
-        bookingService.findByState(1L,State.PAST.toString());
-        bookingService.findByState(1L,State.FUTURE.toString());
-        bookingService.findByState(1L,State.WAITING.toString());
-        bookingService.findByState(1L,State.REJECTED.toString());
+    void findByStateAllVariants() {
+        List<Booking> bookings;
+        bookings = bookingService.findByState(1L,State.ALL.toString());
+        assertEquals(0,bookings.size());
+        bookings = bookingService.findByState(1L,State.CURRENT.toString());
+        assertEquals(0,bookings.size());
+        bookings = bookingService.findByState(1L,State.PAST.toString());
+        assertEquals(0,bookings.size());
+        bookings = bookingService.findByState(1L,State.FUTURE.toString());
+        assertEquals(0,bookings.size());
+        bookings = bookingService.findByState(1L,State.WAITING.toString());
+        assertEquals(0,bookings.size());
+        bookings = bookingService.findByState(1L,State.REJECTED.toString());
+        assertEquals(0,bookings.size());
+        assertThrows(IllegalArgumentException.class,() -> bookingService.findByState(1L,"Present"));
+    }
+    
+    @Test
+    void findByOwnerAndStateAllVariants() {
+        List<Booking> bookings;
+        bookings = bookingService.findByOwnerAndState(1L,State.ALL.toString());
+        assertEquals(0,bookings.size());
+        bookings = bookingService.findByOwnerAndState(1L,State.CURRENT.toString());
+        assertEquals(0,bookings.size());
+        bookings = bookingService.findByOwnerAndState(1L,State.PAST.toString());
+        assertEquals(0,bookings.size());
+        bookings = bookingService.findByOwnerAndState(1L,State.FUTURE.toString());
+        assertEquals(0,bookings.size());
+        bookings = bookingService.findByOwnerAndState(1L,State.WAITING.toString());
+        assertEquals(0,bookings.size());
+        bookings = bookingService.findByOwnerAndState(1L,State.REJECTED.toString());
+        assertEquals(0,bookings.size());
+        assertThrows(IllegalArgumentException.class,() -> bookingService.findByOwnerAndState(1L,"Present"));
     }
 }

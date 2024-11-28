@@ -13,6 +13,8 @@ import ru.practicum.shareit.request.ItemRequestService;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserService;
 import ru.practicum.shareit.user.dto.UserDto;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @AutoConfigureTestDatabase
@@ -39,6 +41,7 @@ class ItemServiceSpringBootTest {
         itemRequestDto = new ItemRequestDto();
         itemRequestDto.setName("item");
         itemRequestDto.setDescription("itemDesc");
+        itemRequestDto.setAvailable(true);
     }
 
     @Test
@@ -48,5 +51,23 @@ class ItemServiceSpringBootTest {
         ItemDto newItem = itemService.createItem(newUser.getId(),itemRequestDto);
         ItemDto findItem = itemService.findById(newItem.getId());
         assertEquals("item",findItem.getName());
+    }
+
+    @Test
+    void findOfRightText() {
+        UserDto newUser = userService.createUser(user);
+        itemRequestService.createRequest(newUser.getId(),request);
+        ItemDto newItem = itemService.createItem(newUser.getId(),itemRequestDto);
+        List<ItemDto> itemsOfText = itemService.findOfText("item");
+        assertTrue(itemsOfText.contains(newItem));
+    }
+
+    @Test
+    void findOfEmptyText() {
+        UserDto newUser = userService.createUser(user);
+        itemRequestService.createRequest(newUser.getId(),request);
+        ItemDto newItem = itemService.createItem(newUser.getId(),itemRequestDto);
+        List<ItemDto> itemsOfText = itemService.findOfText("");
+        assertTrue(itemsOfText.isEmpty());
     }
 }
