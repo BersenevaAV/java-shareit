@@ -72,6 +72,15 @@ class ItemServiceSpringBootTest {
     }
 
     @Test
+    void CreateRightItem() {
+        UserDto newUser = userService.createUser(user);
+        itemRequestService.createRequest(newUser.getId(),request);
+        ItemDto newItem = itemService.createItem(newUser.getId(),itemRequestDto);
+        assertEquals("item",newItem.getName());
+        assertEquals("itemDesc",newItem.getDescription());
+    }
+
+    @Test
     void updateWithEmptyName() {
         UserDto newUser = userService.createUser(user);
         itemRequestService.createRequest(newUser.getId(),request);
@@ -79,5 +88,13 @@ class ItemServiceSpringBootTest {
         ItemDto updatedItem = itemService.updateItem(newItem.getId(),new Item(), newUser.getId());
         assertEquals("item",updatedItem.getName());
         assertEquals("itemDesc",updatedItem.getDescription());
+    }
+
+    @Test
+    void getAllItems() {
+        UserDto newUser = userService.createUser(user);
+        itemRequestService.createRequest(newUser.getId(),request);
+        ItemDto newItem = itemService.createItem(newUser.getId(),itemRequestDto);
+        assertEquals(1,itemService.getAll(newUser.getId()).size());
     }
 }
