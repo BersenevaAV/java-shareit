@@ -36,8 +36,8 @@ class ItemRequestControllerTest {
     void setUp() {
         mvc = MockMvcBuilders.standaloneSetup(controller).build();
         LocalDateTime timeCreated = LocalDateTime.now();
-        itemRequestDto = new ItemRequestDto(1L, "", timeCreated, null);
         itemRequest = new ItemRequest(1L,"", timeCreated,null);
+        itemRequestDto = ItemRequestMapper.toItemRequestDto(itemRequest,null);
         itemRequest.setCreated(timeCreated);
     }
 
@@ -45,7 +45,6 @@ class ItemRequestControllerTest {
     void createRequest() throws Exception {
         when(itemRequestService.createRequest(any(),any()))
                 .thenReturn(itemRequestDto);
-
         mvc.perform(post("/requests")
                         .header("X-Sharer-User-Id",1L)
                         .content(mapper.writeValueAsString(itemRequest))
