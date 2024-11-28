@@ -72,7 +72,7 @@ class ItemServiceSpringBootTest {
     }
 
     @Test
-    void CreateRightItem() {
+    void createRightItem() {
         UserDto newUser = userService.createUser(user);
         itemRequestService.createRequest(newUser.getId(),request);
         ItemDto newItem = itemService.createItem(newUser.getId(),itemRequestDto);
