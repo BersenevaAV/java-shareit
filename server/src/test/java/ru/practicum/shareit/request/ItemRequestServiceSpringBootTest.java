@@ -51,4 +51,29 @@ class ItemRequestServiceSpringBootTest {
         assertThrows(ResponseStatusException.class,
                 () -> itemRequestService.createRequest(newUser.getId() + 2,request));
     }
+
+    @Test
+    void createRightRequest() {
+        UserDto newUser = userService.createUser(user);
+        ItemRequestDto newRequest = itemRequestService.createRequest(newUser.getId(),request);
+        assertEquals("request",newRequest.getDescription());
+    }
+
+    @Test
+    void findByIdRequest() {
+        UserDto newUser = userService.createUser(user);
+        ItemRequestDto newRequest = itemRequestService.createRequest(newUser.getId(),request);
+        itemRequestService.findById(newUser.getId(),newRequest.getId());
+        ItemRequestDto findRequest = itemRequestService.findById(newUser.getId(),newRequest.getId());
+        assertEquals(newRequest.getDescription(),findRequest.getDescription());
+    }
+
+    @Test
+    void getRequestOfRightUser() {
+        UserDto newUser = userService.createUser(user);
+        ItemRequestDto newRequest = itemRequestService.createRequest(newUser.getId(),request);
+        List<ItemRequest> userRequests = itemRequestService.getUserRequest(newUser.getId());
+        assertEquals(1,userRequests.size());
+
+    }
 }
