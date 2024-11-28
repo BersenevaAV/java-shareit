@@ -66,7 +66,7 @@ class ItemServiceSpringBootTest {
     void findOfEmptyText() {
         UserDto newUser = userService.createUser(user);
         itemRequestService.createRequest(newUser.getId(),request);
-        ItemDto newItem = itemService.createItem(newUser.getId(),itemRequestDto);
+        itemService.createItem(newUser.getId(),itemRequestDto);
         List<ItemDto> itemsOfText = itemService.findOfText("");
         assertTrue(itemsOfText.isEmpty());
     }

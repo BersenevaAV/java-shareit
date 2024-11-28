@@ -52,4 +52,14 @@ class UserServiceSpringBootTest {
         userService.createUser(user);
         assertThrows(DataIntegrityViolationException.class,() -> userService.createUser(user2));
     }
+
+    @Test
+    void updateRightUser() {
+        UserDto newUser = userService.createUser(user);
+        UserDto updatedUserWithoutName = userService.updateUser(newUser.getId(), new User(null,"descUpdated"));
+        UserDto updatedUserWithoutEmail = userService.updateUser(newUser.getId(), new User("userUpdated", null));
+        assertEquals("user", updatedUserWithoutName.getName());
+        assertEquals("userUpdated", updatedUserWithoutEmail.getName());
+        assertEquals("descUpdated", updatedUserWithoutEmail.getEmail());
+    }
 }

@@ -110,14 +110,4 @@ public class ItemService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Пользователь не найден")));
         return CommentMapper.toCommentDto(commentRepository.save(comment), dateTimeComment);
     }
-
-    private boolean checkNewItem(Item newItem) {
-        if (newItem.getName() == null || newItem.getName().isEmpty())
-            throw new ValidationException("Название не задано");
-        if (newItem.getDescription() == null || newItem.getDescription().isEmpty())
-            throw new ValidationException("Описание не задано");
-        if (newItem.getAvailable() == null)
-            throw new ValidationException("Статус доступности не задан");
-        return true;
-    }
 }
